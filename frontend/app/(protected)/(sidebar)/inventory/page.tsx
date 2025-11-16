@@ -9,7 +9,9 @@ import {
   Plus,
   Search,
   History,
-  User, ListFilterPlus, ListPlus,
+  User,
+  ListPlus,
+  Trash,
 } from "lucide-react";
 
 interface InventoryTransactionResponseDto {
@@ -66,6 +68,7 @@ export default function Inventory() {
     referenceId: "",
   });
   const [showCreateProductModal, setShowCreateProductModal] = useState(false);
+  const [showDeleteProductModal, setShowDeleteProductModal] = useState(false);
   const [categories, setCategories] = useState([]);
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
   const [categoryForm, setCategoryForm] = useState({
@@ -293,12 +296,33 @@ export default function Inventory() {
     }
   }
 
+  const handleDeleteProduct = async (id) => {
+    if (!id) return;
+    try {
+      const deleteResponse = await fetch(`/api/backend/product/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!deleteResponse.ok) {
+        const error = await deleteResponse.json();
+        throw new Error(error.message || "Failed to delete product");
+      }
+
+      setShowDeleteProductModal(false);
+      await fetchInventory();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
   const closeModals = () => {
     setShowAddModal(false);
     setShowRemoveModal(false);
     setShowAdjustModal(false);
     setShowHistoryModal(false);
     setShowCreateCategoryModal(false);
+    setShowDeleteProductModal(false);
     setSelectedProduct(null);
     setFormData({ quantity: "", notes: "", referenceId: "" });
     setTransactionHistory([]);
@@ -309,6 +333,11 @@ export default function Inventory() {
     setSelectedProduct(item);
     setShowAddModal(true);
   };
+
+  const openDeleteModal = (item) => {
+    setSelectedProduct(item);
+    setShowDeleteProductModal(true);
+  }
 
   const openRemoveModal = (item) => {
     setSelectedProduct(item);
@@ -519,6 +548,13 @@ export default function Inventory() {
                             >
                               <History className="w-4 h-4" />
                             </Button>
+                            <Button
+                                onClick={() => openDeleteModal(item)}
+                                className="p-2 text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition"
+                                title="Delete Product"
+                            >
+                              <Trash className="w-4 h-4" />
+                            </Button>
                           </div>
                         </td>
                       </tr>
@@ -705,6 +741,48 @@ export default function Inventory() {
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium disabled:bg-gray-700 disabled:cursor-not-allowed"
             >
               Create Product
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteProductModal} onOpenChange={setShowDeleteProductModal}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle>Delete Product</DialogTitle>
+            <DialogDescription>
+              This action will permanently delete the product and its related data.
+              Are you sure you want to continue?
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4">
+            <p className="text-sm text-gray-300">
+              Product: <span className="font-semibold">{selectedProduct?.productName}</span>
+            </p>
+            <p className="text-sm text-gray-400 mt-2">
+              ID: <span className="font-mono">{selectedProduct?.productId ?? selectedProduct?.id}</span>
+            </p>
+          </div>
+
+          <div className="mt-6 flex justify-end gap-3">
+            <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteProductModal(false);
+                  setSelectedProduct(null);
+                }}
+            >
+              Cancel
+            </Button>
+            <Button
+                className="bg-rose-600 hover:bg-rose-700 text-white"
+                onClick={() => {
+                  const id = selectedProduct?.productId ?? selectedProduct?.id;
+                  if (id) handleDeleteProduct(Number(id));
+                }}
+            >
+              Delete
             </Button>
           </div>
         </DialogContent>
