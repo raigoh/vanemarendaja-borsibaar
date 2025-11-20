@@ -28,6 +28,7 @@ public class OrganizationService {
     public OrganizationResponseDto create(OrganizationRequestDto request) {
         Organization organization = organizationMapper.toEntity(request);
         organization.setCreatedAt(OffsetDateTime.now());
+        organization.setUpdatedAt(organization.getCreatedAt());
         Organization saved = organizationRepository.save(organization);
         return organizationMapper.toResponse(saved);
     }
@@ -46,5 +47,15 @@ public class OrganizationService {
                 .stream()
                 .map(organizationMapper::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    public OrganizationResponseDto update(Long id, OrganizationRequestDto request) {
+        Organization organization = organizationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Organization not found: " + id));
+        organizationMapper.updateEntity(organization, request);
+        organization.setUpdatedAt(OffsetDateTime.now());
+        Organization saved = organizationRepository.save(organization);
+        return organizationMapper.toResponse(saved);
     }
 }

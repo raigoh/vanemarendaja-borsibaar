@@ -33,4 +33,10 @@ public class OrganizationController {
         return organizationService.getAll();
     }
 
+    @PutMapping("/{id}")
+    public OrganizationResponseDto update(@PathVariable Long id, @RequestBody @Valid OrganizationRequestDto request) {
+        System.out.println(request);
+        return organizationService.update(id, request);
+    }
+
 }
