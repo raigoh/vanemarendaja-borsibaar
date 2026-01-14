@@ -29,15 +29,22 @@ import {
   Trash,
   User,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useCategories } from './hooks/useCategories';
+import { useInventory } from './hooks/useInventory';
 import { InventoryItem, InventoryTransactionResponseDto } from './types';
 import { filterInventory, getStockStatus } from './utils';
-import { useInventory } from './hooks/useInventory';
 
 export const dynamic = 'force-dynamic';
 
 export default function Inventory() {
-  const { inventory, loading, error, refetch: refetchInventory } = useInventory();
+  const {
+    inventory,
+    loading,
+    error,
+    refetch: refetchInventory,
+  } = useInventory();
+  const { categories, refetch: refetchCategories } = useCategories();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
@@ -57,9 +64,6 @@ export default function Inventory() {
   });
   const [showCreateProductModal, setShowCreateProductModal] = useState(false);
   const [showDeleteProductModal, setShowDeleteProductModal] = useState(false);
-  const [categories, setCategories] = useState<
-    Array<{ id: number; name: string; dynamicPricing: boolean }>
-  >([]);
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
   const [categoryForm, setCategoryForm] = useState({
     name: '',
@@ -75,22 +79,6 @@ export default function Inventory() {
     initialQuantity: '',
     notes: '',
   });
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/backend/categories');
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
-      }
-    } catch (err) {
-      console.error('Error fetching categories:', err);
-    }
-  };
 
   const fetchTransactionHistory = async (productId: number) => {
     try {
@@ -291,7 +279,7 @@ export default function Inventory() {
         name: '',
         dynamicPricing: true,
       });
-      await fetchCategories();
+      await refetchCategories();
     } catch (err) {
       if (err instanceof Error) {
         alert(err.message);
