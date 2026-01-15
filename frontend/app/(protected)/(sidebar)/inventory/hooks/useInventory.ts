@@ -5,6 +5,7 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import { InventoryItem } from '../types';
+import { InventoryResponseDto } from '../dto';
 
 export function useInventory() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
@@ -20,7 +21,7 @@ export function useInventory() {
 
       if (!response.ok) throw new Error('Failed to fetch inventory');
 
-      const data = await response.json();
+      const data: InventoryResponseDto[] = await response.json();
       setInventory(data);
       setError(null);
     } catch (err) {
