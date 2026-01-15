@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -21,6 +20,7 @@ import { useState } from 'react';
 import { AddStockDialog } from './components/AddStockDialog';
 import { AdjustStockDialog } from './components/AdjustStockDialog';
 import { CreateProductDialog } from './components/CreateProductDialog';
+import { DeleteProductDialog } from './components/DeleteProductDialog';
 import { InventorySearch } from './components/InventorySearch';
 import { InventoryTable } from './components/InventoryTable';
 import { RemoveStockDialog } from './components/RemoveStockDialog';
@@ -405,57 +405,16 @@ export default function Inventory() {
         onConfirm={handleCreateProduct}
       />
 
-      <Dialog
+      <DeleteProductDialog
         open={showDeleteProductModal}
         onOpenChange={setShowDeleteProductModal}
-      >
-        <DialogContent className="sm:max-w-[480px]">
-          <DialogHeader>
-            <DialogTitle>Delete Product</DialogTitle>
-            <DialogDescription>
-              This action will permanently delete the product and its related
-              data. Are you sure you want to continue?
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="mt-4">
-            <p className="text-sm text-gray-300">
-              Product:{' '}
-              <span className="font-semibold">
-                {selectedProduct?.productName}
-              </span>
-            </p>
-            <p className="text-sm text-gray-400 mt-2">
-              ID:{' '}
-              <span className="font-mono">
-                {selectedProduct?.productId ?? selectedProduct?.id}
-              </span>
-            </p>
-          </div>
-
-          <div className="mt-6 flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowDeleteProductModal(false);
-                setSelectedProduct(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="bg-rose-600 hover:bg-rose-700 text-white"
-              onClick={() => {
-                if (selectedProduct) {
-                  handleDeleteProduct(selectedProduct.productId);
-                }
-              }}
-            >
-              Delete
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        product={selectedProduct}
+        onConfirm={handleDeleteProduct}
+        onCancel={() => {
+          setShowDeleteProductModal(false);
+          setSelectedProduct(null);
+        }}
+      />
 
       <Dialog
         open={showCreateCategoryModal}
