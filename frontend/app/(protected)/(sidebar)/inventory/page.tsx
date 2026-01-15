@@ -22,6 +22,7 @@ import { useState } from 'react';
 import { AddStockDialog } from './components/AddStockDialog';
 import { InventorySearch } from './components/InventorySearch';
 import { InventoryTable } from './components/InventoryTable';
+import { RemoveStockDialog } from './components/RemoveStockDialog';
 import { useCategories } from './hooks/useCategories';
 import { useInventory } from './hooks/useInventory';
 import { useInventoryTransactions } from './hooks/useInventoryTransactions';
@@ -693,80 +694,22 @@ export default function Inventory() {
         onConfirm={handleAddStock}
       />
 
-      <Dialog open={showRemoveModal} onOpenChange={setShowRemoveModal}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Remove Stock</DialogTitle>
-            <DialogDescription>
-              Decrease the stock quantity for the selected product.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mb-4">
-            <p className="text-sm text-gray-600 mb-2">
-              Product:{' '}
-              <span className="font-semibold">
-                {selectedProduct?.productName}
-              </span>
-            </p>
-            <p className="text-sm text-gray-600">
-              Current Stock:{' '}
-              <span className="font-semibold">{selectedProduct?.quantity}</span>
-            </p>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Quantity to Remove
-              </label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={formData.quantity}
-                onChange={e =>
-                  setFormData({ ...formData, quantity: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter quantity"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Reference ID (Optional)
-              </label>
-              <Input
-                type="text"
-                value={formData.referenceId}
-                onChange={e =>
-                  setFormData({ ...formData, referenceId: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="e.g., ORDER-12345"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Notes (Optional)
-              </label>
-              <Textarea
-                value={formData.notes}
-                onChange={e =>
-                  setFormData({ ...formData, notes: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                rows={3}
-                placeholder="e.g., Sold to customer"
-              />
-            </div>
-            <Button
-              onClick={handleRemoveStock}
-              className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition font-medium"
-            >
-              Remove Stock
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <RemoveStockDialog
+        open={showRemoveModal}
+        onOpenChange={setShowRemoveModal}
+        product={selectedProduct}
+        quantity={formData.quantity}
+        referenceId={formData.referenceId}
+        notes={formData.notes}
+        onQuantityChange={value =>
+          setFormData({ ...formData, quantity: value })
+        }
+        onReferenceIdChange={value =>
+          setFormData({ ...formData, referenceId: value })
+        }
+        onNotesChange={value => setFormData({ ...formData, notes: value })}
+        onConfirm={handleRemoveStock}
+      />
 
       <Dialog open={showAdjustModal} onOpenChange={setShowAdjustModal}>
         <DialogContent className="sm:max-w-[500px]">
