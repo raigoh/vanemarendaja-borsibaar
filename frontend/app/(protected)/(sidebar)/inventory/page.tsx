@@ -1,11 +1,8 @@
 'use client';
 
+import { InventoryContent } from './components/InventoryContent';
 import { InventoryDialogs } from './components/InventoryDialogs';
-import { InventoryError } from './components/InventoryError';
-import { InventoryHeader } from './components/InventoryHeader';
 import { InventoryLoading } from './components/InventoryLoading';
-import { InventorySearch } from './components/InventorySearch';
-import { InventoryTable } from './components/InventoryTable';
 import { useCategories } from './hooks/useCategories';
 import { useInventory } from './hooks/useInventory';
 import { useInventoryActions } from './hooks/useInventoryActions';
@@ -114,30 +111,21 @@ export default function Inventory() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="rounded-lg bg-card p-6 shadow-sm border-1 border-[color-mix(in oklab, var(--ring) 50%, transparent)]">
-        <InventoryHeader
-          totalItems={inventory.length}
-          onCreateCategory={() => setShowCreateCategoryModal(true)}
-          onCreateProduct={() => setShowCreateProductModal(true)}
-        />
-
-        {error && <InventoryError error={error} />}
-
-        <InventorySearch
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-        />
-
-        <InventoryTable
-          items={filteredInventory}
-          onAddStock={openAddModal}
-          onRemoveStock={openRemoveModal}
-          onAdjustStock={handleOpenAdjustModal}
-          onViewHistory={handleOpenHistoryModal}
-          onDeleteProduct={openDeleteModal}
-        />
-      </div>
+    <>
+      <InventoryContent
+        inventory={inventory}
+        filteredInventory={filteredInventory}
+        searchTerm={searchTerm}
+        error={error}
+        onSearchChange={setSearchTerm}
+        onAddStock={openAddModal}
+        onRemoveStock={openRemoveModal}
+        onAdjustStock={handleOpenAdjustModal}
+        onViewHistory={handleOpenHistoryModal}
+        onDeleteProduct={openDeleteModal}
+        onCreateCategory={() => setShowCreateCategoryModal(true)}
+        onCreateProduct={() => setShowCreateProductModal(true)}
+      />
 
       <InventoryDialogs
         showAddModal={showAddModal}
@@ -172,6 +160,6 @@ export default function Inventory() {
         handleAddCategory={handleAddCategory}
         handleDeleteProduct={handleDeleteProduct}
       />
-    </div>
+    </>
   );
 }
