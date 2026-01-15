@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Category } from '../types';
 import { ValidationError, validateCategoryName } from '../validation';
 
@@ -44,8 +44,11 @@ export function CreateCategoryDialog({
 }: CreateCategoryDialogProps) {
   const [nameError, setNameError] = useState<ValidationError | null>(null);
 
-  // Get existing category names for duplicate checking
-  const existingCategoryNames = categories.map(cat => cat.name);
+  // Get existing category names for duplicate checking (memoized to prevent infinite loops)
+  const existingCategoryNames = useMemo(
+    () => categories.map(cat => cat.name),
+    [categories]
+  );
 
   // Validate category name on change
   useEffect(() => {
@@ -73,10 +76,17 @@ export function CreateCategoryDialog({
               type="text"
               value={categoryForm.name}
               onChange={e => onFormChange('name', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                nameError
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'border-gray-700 focus:ring-blue-500'
+              }`}
               placeholder="Category name"
               required
             />
+            {nameError && (
+              <p className="text-sm text-red-500 mt-1">{nameError.message}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
