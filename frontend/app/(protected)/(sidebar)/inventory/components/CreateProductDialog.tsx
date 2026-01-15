@@ -91,10 +91,19 @@ export function CreateProductDialog({
               type="text"
               value={productForm.name}
               onChange={e => onFormChange('name', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                getFieldError('name')
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'border-gray-700 focus:ring-blue-500'
+              }`}
               placeholder="Enter product name"
               required
             />
+            {getFieldError('name') && (
+              <p className="text-sm text-red-500 mt-1">
+                {getFieldError('name')?.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
