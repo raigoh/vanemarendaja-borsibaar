@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -15,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ValidationError } from '../validation';
 
 interface CreateCategoryDialogProps {
   open: boolean;
@@ -34,6 +36,8 @@ export function CreateCategoryDialog({
   onFormChange,
   onConfirm,
 }: CreateCategoryDialogProps) {
+  const [nameError, setNameError] = useState<ValidationError | null>(null);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
