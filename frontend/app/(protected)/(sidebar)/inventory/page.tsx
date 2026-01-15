@@ -1,24 +1,11 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { AlertCircle, ListPlus, Package, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { AddStockDialog } from './components/AddStockDialog';
 import { AdjustStockDialog } from './components/AdjustStockDialog';
+import { CreateCategoryDialog } from './components/CreateCategoryDialog';
 import { CreateProductDialog } from './components/CreateProductDialog';
 import { DeleteProductDialog } from './components/DeleteProductDialog';
 import { InventorySearch } from './components/InventorySearch';
@@ -416,63 +403,15 @@ export default function Inventory() {
         }}
       />
 
-      <Dialog
+      <CreateCategoryDialog
         open={showCreateCategoryModal}
         onOpenChange={setShowCreateCategoryModal}
-      >
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Create New Category</DialogTitle>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Category Name *
-              </label>
-              <Input
-                type="text"
-                value={categoryForm.name}
-                onChange={e =>
-                  setCategoryForm({
-                    ...categoryForm,
-                    name: e.target.value,
-                  })
-                }
-                className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Category name"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Dynamic Pricing *
-              </label>
-              <Select
-                value={categoryForm.dynamicPricing ? 'enabled' : 'disabled'}
-                onValueChange={value =>
-                  setCategoryForm({
-                    ...categoryForm,
-                    dynamicPricing: value === 'enabled',
-                  })
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select pricing type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="enabled">Enabled</SelectItem>
-                  <SelectItem value="disabled">Disabled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button
-              onClick={handleAddCategory}
-              disabled={!categoryForm.name}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium disabled:bg-gray-700 disabled:cursor-not-allowed"
-            >
-              Create Category
-            </Button>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+        categoryForm={categoryForm}
+        onFormChange={(field, value) =>
+          setCategoryForm({ ...categoryForm, [field]: value })
+        }
+        onConfirm={handleAddCategory}
+      />
 
       <AddStockDialog
         open={showAddModal}
