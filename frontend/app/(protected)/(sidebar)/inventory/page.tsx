@@ -3,28 +3,21 @@
 import { InventoryContent } from './components/InventoryContent';
 import { InventoryDialogs } from './components/InventoryDialogs';
 import { InventoryLoading } from './components/InventoryLoading';
-import { useCategories } from './hooks/useCategories';
-import { useInventory } from './hooks/useInventory';
-import { useInventoryActions } from './hooks/useInventoryActions';
-import { useInventoryForms } from './hooks/useInventoryForms';
-import { useInventoryModalHandlers } from './hooks/useInventoryModalHandlers';
-import { useInventoryModals } from './hooks/useInventoryModals';
-import { useInventorySearch } from './hooks/useInventorySearch';
-import { useInventoryTransactions } from './hooks/useInventoryTransactions';
+import { useInventoryPage } from './hooks/useInventoryPage';
 
 export const dynamic = 'force-dynamic';
 
 export default function Inventory() {
   const {
     inventory,
+    filteredInventory,
+    categories,
+    transactionHistory,
     loading,
+    loadingHistory,
     error,
-    refetch: refetchInventory,
-  } = useInventory();
-  const { categories, refetch: refetchCategories } = useCategories();
-  const { searchTerm, setSearchTerm, filteredInventory } =
-    useInventorySearch(inventory);
-  const {
+    searchTerm,
+    setSearchTerm,
     showAddModal,
     showRemoveModal,
     showAdjustModal,
@@ -41,70 +34,24 @@ export default function Inventory() {
     setShowDeleteProductModal,
     setShowCreateCategoryModal,
     setSelectedProduct,
-    openAddModal,
-    openDeleteModal,
-    openRemoveModal,
-    openAdjustModal,
-    openHistoryModal,
-    closeModals,
-  } = useInventoryModals();
-  const {
-    transactionHistory,
-    loadingHistory,
-    fetchTransactionHistory,
-    clearHistory,
-  } = useInventoryTransactions();
-  const {
     formData,
     categoryForm,
     productForm,
     setFormData,
     setCategoryForm,
     setProductForm,
-    resetFormData,
-    resetCategoryForm,
-    resetProductForm,
-  } = useInventoryForms();
-
-  const {
+    openAddModal,
+    openRemoveModal,
+    handleOpenAdjustModal,
+    handleOpenHistoryModal,
+    openDeleteModal,
     handleCreateProduct,
     handleAddStock,
     handleRemoveStock,
     handleAdjustStock,
     handleAddCategory,
     handleDeleteProduct,
-  } = useInventoryActions({
-    refetchInventory,
-    refetchCategories,
-    selectedProduct,
-    formData,
-    productForm,
-    categoryForm,
-    onCloseModals: () => {
-      closeModals(clearHistory);
-      resetFormData();
-    },
-    onProductFormReset: () => {
-      setShowCreateProductModal(false);
-      resetProductForm();
-    },
-    onCategoryFormReset: () => {
-      setShowCreateCategoryModal(false);
-      resetCategoryForm();
-    },
-    onDeleteModalClose: () => {
-      setShowDeleteProductModal(false);
-    },
-  });
-
-  const { handleOpenAdjustModal, handleOpenHistoryModal } =
-    useInventoryModalHandlers({
-      openAdjustModal,
-      openHistoryModal,
-      setFormData,
-      formData,
-      fetchTransactionHistory,
-    });
+  } = useInventoryPage();
 
   if (loading) {
     return <InventoryLoading />;
