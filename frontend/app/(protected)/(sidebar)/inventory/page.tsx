@@ -11,9 +11,9 @@ import { useCategories } from './hooks/useCategories';
 import { useInventory } from './hooks/useInventory';
 import { useInventoryActions } from './hooks/useInventoryActions';
 import { useInventoryForms } from './hooks/useInventoryForms';
+import { useInventoryModalHandlers } from './hooks/useInventoryModalHandlers';
 import { useInventoryModals } from './hooks/useInventoryModals';
 import { useInventoryTransactions } from './hooks/useInventoryTransactions';
-import { InventoryItem } from './types';
 import { filterInventory } from './utils';
 
 export const dynamic = 'force-dynamic';
@@ -100,15 +100,14 @@ export default function Inventory() {
     },
   });
 
-  const handleOpenAdjustModal = (item: InventoryItem) => {
-    setFormData({ ...formData, quantity: item.quantity.toString() });
-    openAdjustModal(item);
-  };
-
-  const handleOpenHistoryModal = async (item: InventoryItem) => {
-    openHistoryModal(item);
-    await fetchTransactionHistory(item.productId);
-  };
+  const { handleOpenAdjustModal, handleOpenHistoryModal } =
+    useInventoryModalHandlers({
+      openAdjustModal,
+      openHistoryModal,
+      setFormData,
+      formData,
+      fetchTransactionHistory,
+    });
 
   const filteredInventory = filterInventory(inventory, searchTerm);
 
