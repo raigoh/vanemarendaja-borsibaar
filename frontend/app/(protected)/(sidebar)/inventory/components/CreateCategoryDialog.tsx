@@ -109,7 +109,7 @@ export function CreateCategoryDialog({
           </div>
           <Button
             onClick={onConfirm}
-            disabled={!categoryForm.name}
+            disabled={!categoryForm.name || !!nameError}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium disabled:bg-gray-700 disabled:cursor-not-allowed"
           >
             Create Category
