@@ -114,6 +114,7 @@ export default function Inventory() {
         setFormData={setFormData}
         setCategoryForm={setCategoryForm}
         setProductForm={setProductForm}
+        inventory={inventory}
         categories={categories}
         transactionHistory={transactionHistory}
         loadingHistory={loadingHistory}

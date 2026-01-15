@@ -15,7 +15,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Category } from '../types';
+import { useEffect, useMemo, useState } from 'react';
+import { Category, InventoryItem } from '../types';
+import { ValidationResult, validateProductForm } from '../validation';
 
 interface ProductForm {
   name: string;
@@ -33,6 +35,7 @@ interface CreateProductDialogProps {
   onOpenChange: (open: boolean) => void;
   productForm: ProductForm;
   categories: Category[];
+  inventory: InventoryItem[];
   onFormChange: (field: keyof ProductForm, value: string) => void;
   onConfirm: () => void;
 }
@@ -42,15 +45,33 @@ export function CreateProductDialog({
   onOpenChange,
   productForm,
   categories,
+  inventory,
   onFormChange,
   onConfirm,
 }: CreateProductDialogProps) {
-  const isFormValid =
-    productForm.name &&
-    productForm.categoryId &&
-    productForm.currentPrice &&
-    productForm.minPrice &&
-    productForm.maxPrice;
+  const [validationResult, setValidationResult] = useState<ValidationResult>({
+    isValid: false,
+    errors: [],
+  });
+
+  // Get existing product names for duplicate checking (memoized to prevent infinite loops)
+  const existingProductNames = useMemo(
+    () => inventory.map(item => item.productName),
+    [inventory]
+  );
+
+  // Validate form on change
+  useEffect(() => {
+    const result = validateProductForm(productForm, existingProductNames);
+    setValidationResult(result);
+  }, [productForm, existingProductNames]);
+
+  // Helper function to get error for a specific field
+  const getFieldError = (fieldName: string) => {
+    return validationResult.errors.find(error => error.field === fieldName);
+  };
+
+  const isFormValid = validationResult.isValid;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

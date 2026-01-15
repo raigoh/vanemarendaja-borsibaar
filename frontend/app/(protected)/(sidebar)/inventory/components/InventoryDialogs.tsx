@@ -84,6 +84,7 @@ interface InventoryDialogsProps {
     notes: string;
   }) => void;
   // Data
+  inventory: InventoryItem[];
   categories: Category[];
   transactionHistory: InventoryTransactionResponseDto[];
   loadingHistory: boolean;
@@ -119,6 +120,7 @@ export function InventoryDialogs({
   setFormData,
   setCategoryForm,
   setProductForm,
+  inventory,
   categories,
   transactionHistory,
   loadingHistory,
@@ -136,6 +138,7 @@ export function InventoryDialogs({
         onOpenChange={setShowCreateProductModal}
         productForm={productForm}
         categories={categories}
+        inventory={inventory}
         onFormChange={(field: keyof typeof productForm, value: string) =>
           setProductForm({ ...productForm, [field]: value })
         }
