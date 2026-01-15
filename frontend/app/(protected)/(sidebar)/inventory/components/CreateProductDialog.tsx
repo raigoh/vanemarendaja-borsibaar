@@ -67,8 +67,16 @@ export function CreateProductDialog({
   }, [productForm, existingProductNames]);
 
   // Helper function to get error for a specific field
+  // Checks multiple possible field name variations (e.g., 'currentprice' and 'currentPrice')
   const getFieldError = (fieldName: string) => {
-    return validationResult.errors.find(error => error.field === fieldName);
+    return (
+      validationResult.errors.find(error => error.field === fieldName) ||
+      validationResult.errors.find(
+        error =>
+          error.field === fieldName.toLowerCase() ||
+          error.field === fieldName.toLowerCase().replace(' ', '')
+      )
+    );
   };
 
   const isFormValid = validationResult.isValid;
@@ -135,10 +143,21 @@ export function CreateProductDialog({
               min="0"
               value={productForm.currentPrice}
               onChange={e => onFormChange('currentPrice', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                getFieldError('currentPrice') || getFieldError('currentprice')
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'border-gray-700 focus:ring-blue-500'
+              }`}
               placeholder="0.00"
               required
             />
+            {(getFieldError('currentPrice') ||
+              getFieldError('currentprice')) && (
+              <p className="text-sm text-red-500 mt-1">
+                {getFieldError('currentPrice')?.message ||
+                  getFieldError('currentprice')?.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -150,10 +169,19 @@ export function CreateProductDialog({
               min="0"
               value={productForm.minPrice}
               onChange={e => onFormChange('minPrice', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                getFieldError('minprice')
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'border-gray-700 focus:ring-blue-500'
+              }`}
               placeholder="0.00"
               required
             />
+            {getFieldError('minprice') && (
+              <p className="text-sm text-red-500 mt-1">
+                {getFieldError('minprice')?.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -165,10 +193,20 @@ export function CreateProductDialog({
               min="0"
               value={productForm.maxPrice}
               onChange={e => onFormChange('maxPrice', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                getFieldError('maxPrice') || getFieldError('maxprice')
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'border-gray-700 focus:ring-blue-500'
+              }`}
               placeholder="0.00"
               required
             />
+            {(getFieldError('maxPrice') || getFieldError('maxprice')) && (
+              <p className="text-sm text-red-500 mt-1">
+                {getFieldError('maxPrice')?.message ||
+                  getFieldError('maxprice')?.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
