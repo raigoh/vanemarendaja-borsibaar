@@ -11,6 +11,7 @@ import type {
   AddStockRequestDto,
   RemoveStockRequestDto,
   AdjustStockRequestDto,
+  CategoryRequestDto,
 } from '../dto';
 import { InventoryItem } from '../types';
 
@@ -213,13 +214,15 @@ export function useInventoryActions({
 
   const handleAddCategory = async () => {
     try {
+      const requestBody: CategoryRequestDto = {
+        name: categoryForm.name,
+        dynamicPricing: categoryForm.dynamicPricing || null,
+      };
+
       const categoryResponse = await fetch('/api/backend/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: categoryForm.name,
-          dynamicPricing: categoryForm.dynamicPricing,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!categoryResponse.ok) {
