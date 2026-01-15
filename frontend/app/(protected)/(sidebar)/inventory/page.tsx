@@ -1,21 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { AddStockDialog } from './components/AddStockDialog';
-import { AdjustStockDialog } from './components/AdjustStockDialog';
-import { CreateCategoryDialog } from './components/CreateCategoryDialog';
-import { CreateProductDialog } from './components/CreateProductDialog';
-import { DeleteProductDialog } from './components/DeleteProductDialog';
+import { InventoryDialogs } from './components/InventoryDialogs';
 import { InventoryError } from './components/InventoryError';
 import { InventoryHeader } from './components/InventoryHeader';
 import { InventoryLoading } from './components/InventoryLoading';
 import { InventorySearch } from './components/InventorySearch';
 import { InventoryTable } from './components/InventoryTable';
-import { RemoveStockDialog } from './components/RemoveStockDialog';
-import { TransactionHistoryDialog } from './components/TransactionHistoryDialog';
 import { useCategories } from './hooks/useCategories';
 import { useInventory } from './hooks/useInventory';
 import { useInventoryActions } from './hooks/useInventoryActions';
+import { useInventoryForms } from './hooks/useInventoryForms';
 import { useInventoryModals } from './hooks/useInventoryModals';
 import { useInventoryTransactions } from './hooks/useInventoryTransactions';
 import { InventoryItem } from './types';
@@ -62,25 +57,17 @@ export default function Inventory() {
     fetchTransactionHistory,
     clearHistory,
   } = useInventoryTransactions();
-  const [formData, setFormData] = useState({
-    quantity: '',
-    notes: '',
-    referenceId: '',
-  });
-  const [categoryForm, setCategoryForm] = useState({
-    name: '',
-    dynamicPricing: true,
-  });
-  const [productForm, setProductForm] = useState({
-    name: '',
-    description: '',
-    categoryId: '',
-    currentPrice: '',
-    minPrice: '',
-    maxPrice: '',
-    initialQuantity: '',
-    notes: '',
-  });
+  const {
+    formData,
+    categoryForm,
+    productForm,
+    setFormData,
+    setCategoryForm,
+    setProductForm,
+    resetFormData,
+    resetCategoryForm,
+    resetProductForm,
+  } = useInventoryForms();
 
   const {
     handleCreateProduct,
@@ -98,27 +85,15 @@ export default function Inventory() {
     categoryForm,
     onCloseModals: () => {
       closeModals(clearHistory);
-      setFormData({ quantity: '', notes: '', referenceId: '' });
+      resetFormData();
     },
     onProductFormReset: () => {
       setShowCreateProductModal(false);
-      setProductForm({
-        name: '',
-        description: '',
-        categoryId: '',
-        currentPrice: '',
-        minPrice: '',
-        maxPrice: '',
-        initialQuantity: '',
-        notes: '',
-      });
+      resetProductForm();
     },
     onCategoryFormReset: () => {
       setShowCreateCategoryModal(false);
-      setCategoryForm({
-        name: '',
-        dynamicPricing: true,
-      });
+      resetCategoryForm();
     },
     onDeleteModalClose: () => {
       setShowDeleteProductModal(false);
@@ -167,87 +142,38 @@ export default function Inventory() {
         />
       </div>
 
-      <CreateProductDialog
-        open={showCreateProductModal}
-        onOpenChange={setShowCreateProductModal}
-        productForm={productForm}
-        categories={categories}
-        onFormChange={(field: keyof typeof productForm, value: string) =>
-          setProductForm({ ...productForm, [field]: value })
-        }
-        onConfirm={handleCreateProduct}
-      />
-
-      <DeleteProductDialog
-        open={showDeleteProductModal}
-        onOpenChange={setShowDeleteProductModal}
-        product={selectedProduct}
-        onConfirm={handleDeleteProduct}
-        onCancel={() => {
-          setShowDeleteProductModal(false);
-          setSelectedProduct(null);
-        }}
-      />
-
-      <CreateCategoryDialog
-        open={showCreateCategoryModal}
-        onOpenChange={setShowCreateCategoryModal}
+      <InventoryDialogs
+        showAddModal={showAddModal}
+        showRemoveModal={showRemoveModal}
+        showAdjustModal={showAdjustModal}
+        showHistoryModal={showHistoryModal}
+        showCreateProductModal={showCreateProductModal}
+        showDeleteProductModal={showDeleteProductModal}
+        showCreateCategoryModal={showCreateCategoryModal}
+        selectedProduct={selectedProduct}
+        setShowAddModal={setShowAddModal}
+        setShowRemoveModal={setShowRemoveModal}
+        setShowAdjustModal={setShowAdjustModal}
+        setShowHistoryModal={setShowHistoryModal}
+        setShowCreateProductModal={setShowCreateProductModal}
+        setShowDeleteProductModal={setShowDeleteProductModal}
+        setShowCreateCategoryModal={setShowCreateCategoryModal}
+        setSelectedProduct={setSelectedProduct}
+        formData={formData}
         categoryForm={categoryForm}
-        onFormChange={(field, value) =>
-          setCategoryForm({ ...categoryForm, [field]: value })
-        }
-        onConfirm={handleAddCategory}
-      />
-
-      <AddStockDialog
-        open={showAddModal}
-        onOpenChange={setShowAddModal}
-        product={selectedProduct}
-        quantity={formData.quantity}
-        notes={formData.notes}
-        onQuantityChange={value =>
-          setFormData({ ...formData, quantity: value })
-        }
-        onNotesChange={value => setFormData({ ...formData, notes: value })}
-        onConfirm={handleAddStock}
-      />
-
-      <RemoveStockDialog
-        open={showRemoveModal}
-        onOpenChange={setShowRemoveModal}
-        product={selectedProduct}
-        quantity={formData.quantity}
-        referenceId={formData.referenceId}
-        notes={formData.notes}
-        onQuantityChange={value =>
-          setFormData({ ...formData, quantity: value })
-        }
-        onReferenceIdChange={value =>
-          setFormData({ ...formData, referenceId: value })
-        }
-        onNotesChange={value => setFormData({ ...formData, notes: value })}
-        onConfirm={handleRemoveStock}
-      />
-
-      <AdjustStockDialog
-        open={showAdjustModal}
-        onOpenChange={setShowAdjustModal}
-        product={selectedProduct}
-        quantity={formData.quantity}
-        notes={formData.notes}
-        onQuantityChange={value =>
-          setFormData({ ...formData, quantity: value })
-        }
-        onNotesChange={value => setFormData({ ...formData, notes: value })}
-        onConfirm={handleAdjustStock}
-      />
-
-      <TransactionHistoryDialog
-        open={showHistoryModal}
-        onOpenChange={setShowHistoryModal}
-        product={selectedProduct}
-        transactions={transactionHistory}
-        loading={loadingHistory}
+        productForm={productForm}
+        setFormData={setFormData}
+        setCategoryForm={setCategoryForm}
+        setProductForm={setProductForm}
+        categories={categories}
+        transactionHistory={transactionHistory}
+        loadingHistory={loadingHistory}
+        handleCreateProduct={handleCreateProduct}
+        handleAddStock={handleAddStock}
+        handleRemoveStock={handleRemoveStock}
+        handleAdjustStock={handleAdjustStock}
+        handleAddCategory={handleAddCategory}
+        handleDeleteProduct={handleDeleteProduct}
       />
     </div>
   );
