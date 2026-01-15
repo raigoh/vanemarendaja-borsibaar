@@ -1,13 +1,13 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { AlertCircle, ListPlus, Package, Plus } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { AddStockDialog } from './components/AddStockDialog';
 import { AdjustStockDialog } from './components/AdjustStockDialog';
 import { CreateCategoryDialog } from './components/CreateCategoryDialog';
 import { CreateProductDialog } from './components/CreateProductDialog';
 import { DeleteProductDialog } from './components/DeleteProductDialog';
+import { InventoryHeader } from './components/InventoryHeader';
 import { InventorySearch } from './components/InventorySearch';
 import { InventoryTable } from './components/InventoryTable';
 import { RemoveStockDialog } from './components/RemoveStockDialog';
@@ -331,33 +331,11 @@ export default function Inventory() {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="rounded-lg bg-card p-6 shadow-sm border-1 border-[color-mix(in oklab, var(--ring) 50%, transparent)]">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <Package className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-100">
-              Inventory Management
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={() => setShowCreateCategoryModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-black rounded-lg hover:bg-blue-200 transition font-medium"
-            >
-              <ListPlus className="w-4 h-4" />
-              <span className="flex">New Category</span>
-            </Button>
-            <Button
-              onClick={() => setShowCreateProductModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="flex">New Product</span>
-            </Button>
-            <div className="text-sm text-gray-400">
-              Total Items: {inventory.length}
-            </div>
-          </div>
-        </div>
+        <InventoryHeader
+          totalItems={inventory.length}
+          onCreateCategory={() => setShowCreateCategoryModal(true)}
+          onCreateProduct={() => setShowCreateProductModal(true)}
+        />
 
         {error && (
           <div className="mb-4 p-4 bg-red-950 border border-red-800 rounded-lg flex items-center gap-2 text-red-50">
