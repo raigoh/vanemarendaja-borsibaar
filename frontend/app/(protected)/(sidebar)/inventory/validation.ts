@@ -93,3 +93,32 @@ export function validatePrice(
 
   return null;
 }
+
+/**
+ * Validates price range (min <= max)
+ * Checks that minimum price is less than or equal to maximum price
+ * @param minPrice - Minimum price string
+ * @param maxPrice - Maximum price string
+ * @returns Validation error or null if valid
+ */
+export function validatePriceRange(
+  minPrice: string,
+  maxPrice: string
+): ValidationError | null {
+  const min = parseFloat(minPrice);
+  const max = parseFloat(maxPrice);
+
+  // Only validate if both are valid numbers
+  if (isNaN(min) || isNaN(max)) {
+    return null; // Let other validators handle NaN cases
+  }
+
+  if (min > max) {
+    return {
+      field: 'maxPrice',
+      message: 'Max price must be greater than or equal to min price',
+    };
+  }
+
+  return null;
+}
