@@ -5,7 +5,13 @@
  * @param props - Configuration object containing refetch functions, form data, and callbacks
  * @returns Object containing all action handler functions
  */
-import type { ProductRequestDto, ProductResponseDto } from '../dto';
+import type {
+  ProductRequestDto,
+  ProductResponseDto,
+  AddStockRequestDto,
+  RemoveStockRequestDto,
+  AdjustStockRequestDto,
+} from '../dto';
 import { InventoryItem } from '../types';
 
 interface UseInventoryActionsProps {
@@ -77,15 +83,17 @@ export function useInventoryActions({
         productForm.initialQuantity &&
         parseFloat(productForm.initialQuantity) > 0
       ) {
+        const addStockBody: AddStockRequestDto = {
+          productId: newProduct.id,
+          quantity: parseFloat(productForm.initialQuantity),
+          notes: productForm.notes || 'Initial stock',
+        };
+
         await fetch('/api/backend/inventory/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({
-            productId: newProduct.id,
-            quantity: parseFloat(productForm.initialQuantity),
-            notes: productForm.notes || 'Initial stock',
-          }),
+          body: JSON.stringify(addStockBody),
         });
       }
 
@@ -107,15 +115,17 @@ export function useInventoryActions({
     }
 
     try {
+      const requestBody: AddStockRequestDto = {
+        productId: selectedProduct.productId,
+        quantity: parseFloat(formData.quantity),
+        notes: formData.notes || null,
+      };
+
       const response = await fetch('/api/backend/inventory/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          productId: selectedProduct.productId,
-          quantity: parseFloat(formData.quantity),
-          notes: formData.notes,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) throw new Error('Failed to add stock');
@@ -138,16 +148,18 @@ export function useInventoryActions({
     }
 
     try {
+      const requestBody: RemoveStockRequestDto = {
+        productId: selectedProduct.productId,
+        quantity: parseFloat(formData.quantity),
+        referenceId: formData.referenceId || null,
+        notes: formData.notes || null,
+      };
+
       const response = await fetch('/api/backend/inventory/remove', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          productId: selectedProduct.productId,
-          quantity: parseFloat(formData.quantity),
-          referenceId: formData.referenceId,
-          notes: formData.notes,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -173,15 +185,17 @@ export function useInventoryActions({
     }
 
     try {
+      const requestBody: AdjustStockRequestDto = {
+        productId: selectedProduct.productId,
+        newQuantity: parseFloat(formData.quantity),
+        notes: formData.notes || null,
+      };
+
       const response = await fetch('/api/backend/inventory/adjust', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          productId: selectedProduct.productId,
-          newQuantity: parseFloat(formData.quantity),
-          notes: formData.notes,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) throw new Error('Failed to adjust stock');
