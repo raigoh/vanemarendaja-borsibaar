@@ -154,3 +154,48 @@ export function validateCurrentPriceInRange(
 
   return null;
 }
+
+/**
+ * Validates a quantity value
+ * Checks for empty value, valid number, non-negative value, and optionally non-zero
+ * @param quantity - Quantity string to validate
+ * @param fieldName - Field name for error message (default: "quantity")
+ * @param allowZero - Whether zero is allowed (default: false)
+ * @returns Validation error or null if valid
+ */
+export function validateQuantity(
+  quantity: string,
+  fieldName: string = 'quantity',
+  allowZero: boolean = false
+): ValidationError | null {
+  if (!quantity || quantity.trim().length === 0) {
+    return {
+      field: fieldName,
+      message: `${fieldName} is required`,
+    };
+  }
+
+  const qty = parseFloat(quantity);
+  if (isNaN(qty)) {
+    return {
+      field: fieldName,
+      message: `${fieldName} must be a valid number`,
+    };
+  }
+
+  if (qty < 0) {
+    return {
+      field: fieldName,
+      message: `${fieldName} cannot be negative`,
+    };
+  }
+
+  if (!allowZero && qty === 0) {
+    return {
+      field: fieldName,
+      message: `${fieldName} must be greater than zero`,
+    };
+  }
+
+  return null;
+}
