@@ -157,6 +157,7 @@ export function InventoryDialogs({
         open={showCreateCategoryModal}
         onOpenChange={setShowCreateCategoryModal}
         categoryForm={categoryForm}
+        categories={categories}
         onFormChange={(field, value) =>
           setCategoryForm({ ...categoryForm, [field]: value })
         }

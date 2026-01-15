@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,7 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ValidationError } from '../validation';
+import { useEffect, useState } from 'react';
+import { Category } from '../types';
+import { ValidationError, validateCategoryName } from '../validation';
 
 interface CreateCategoryDialogProps {
   open: boolean;
@@ -25,7 +26,11 @@ interface CreateCategoryDialogProps {
     name: string;
     dynamicPricing: boolean;
   };
-  onFormChange: (field: 'name' | 'dynamicPricing', value: string | boolean) => void;
+  categories: Category[];
+  onFormChange: (
+    field: 'name' | 'dynamicPricing',
+    value: string | boolean
+  ) => void;
   onConfirm: () => void;
 }
 
@@ -33,10 +38,27 @@ export function CreateCategoryDialog({
   open,
   onOpenChange,
   categoryForm,
+  categories,
   onFormChange,
   onConfirm,
 }: CreateCategoryDialogProps) {
   const [nameError, setNameError] = useState<ValidationError | null>(null);
+
+  // Get existing category names for duplicate checking
+  const existingCategoryNames = categories.map(cat => cat.name);
+
+  // Validate category name on change
+  useEffect(() => {
+    if (categoryForm.name) {
+      const error = validateCategoryName(
+        categoryForm.name,
+        existingCategoryNames
+      );
+      setNameError(error);
+    } else {
+      setNameError(null);
+    }
+  }, [categoryForm.name, existingCategoryNames]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
