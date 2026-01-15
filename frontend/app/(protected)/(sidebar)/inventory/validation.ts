@@ -122,3 +122,35 @@ export function validatePriceRange(
 
   return null;
 }
+
+/**
+ * Validates that current price is within min-max range
+ * Checks that current price is between min and max price (inclusive)
+ * @param currentPrice - Current price string
+ * @param minPrice - Minimum price string
+ * @param maxPrice - Maximum price string
+ * @returns Validation error or null if valid
+ */
+export function validateCurrentPriceInRange(
+  currentPrice: string,
+  minPrice: string,
+  maxPrice: string
+): ValidationError | null {
+  const current = parseFloat(currentPrice);
+  const min = parseFloat(minPrice);
+  const max = parseFloat(maxPrice);
+
+  // Only validate if all are valid numbers
+  if (isNaN(current) || isNaN(min) || isNaN(max)) {
+    return null; // Let other validators handle NaN cases
+  }
+
+  if (current < min || current > max) {
+    return {
+      field: 'currentPrice',
+      message: 'Current price must be between min and max price',
+    };
+  }
+
+  return null;
+}
