@@ -68,3 +68,34 @@ export interface InventoryResponseDto {
   maxPrice: number;
   updatedAt: string;
 }
+
+/**
+ * Add stock request DTO
+ * Matches AddStockRequestDto.java
+ */
+export interface AddStockRequestDto {
+  productId: number;
+  quantity: number;
+  notes?: string | null;
+}
+
+/**
+ * Remove stock request DTO
+ * Matches RemoveStockRequestDto.java
+ */
+export interface RemoveStockRequestDto {
+  productId: number;
+  quantity: number;
+  referenceId?: string | null;
+  notes?: string | null;
+}
+
+/**
+ * Adjust stock request DTO
+ * Matches AdjustStockRequestDto.java
+ */
+export interface AdjustStockRequestDto {
+  productId: number;
+  newQuantity: number;
+  notes?: string | null;
+}
